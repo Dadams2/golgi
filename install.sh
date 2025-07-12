@@ -343,7 +343,7 @@ function interactive_set_encryption() {
     gum style --bold --foreground="72" "== Clevis JWE token =="
 
     gum style --border=rounded --border-foreground="45" \
-        "Paste the Clevis JWE content into secrets/clevis-$sysname.jwe and then push it"
+        "Paste the Clevis JWE content into secrets/clevis-$sysname.jwt and then push it"
     gum confirm --affirmative="Done" --negative="Abort" "Is the Clevis JWE file committed and pushed?"
     gum spin --title="Pulling..." --show-stdout -- git -C "$scriptdir" pull --rebase
     while [ ! -f "$scriptdir/secrets/clevis-$sysname.jwe" ]; do
@@ -380,13 +380,17 @@ function interactive_format_data_bcachefs() {
 # 
 # Entrypoint
 
-sysname="$(gum choose --header=" System designation" 'golgi (hetzner VM)' 'nucleus (bare-metal NAS)' | cut -d' ' -f1)"
+sysname="$(gum choose --header=" System designation" 'golgi (hetzner VM)' 'nucleus (bare-metal NAS)' 'calcification (bare-metal NAS)' | cut -d' ' -f1)"
 gum join "$(gum style --foreground=72 "System:")" "$sysname"
 
 if [ "$sysname" = "golgi" ]; then
     interactive_format_boot_btrfs
     generate_ssh_key
 elif [ "$sysname" = "nucleus" ]; then
+    interactive_format_boot_bcachefs
+    generate_ssh_key
+    interactive_format_data_bcachefs
+elif [ "$sysname" = "calcification" ]; then
     interactive_format_boot_bcachefs
     generate_ssh_key
     interactive_format_data_bcachefs

@@ -132,10 +132,10 @@ in {
         sender = "${config.site.domain} — Authentication <services.authentication@${config.site.domain}>";
         subject = "{title}";
       };
-      log.level = "debug";
+      log.level = "info";
       identity_providers.oidc = {
         cors = {
-          endpoints = [ "authorization" "token" "revocation" "introspection" "userinfo" ];
+          endpoints = [ "token" ];
           allowed_origins_from_client_redirect_uris = true;
         };
         authorization_policies.default = {
