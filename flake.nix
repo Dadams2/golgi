@@ -51,91 +51,38 @@
     flake-utils-plus.lib.mkFlake {
       inherit self inputs modules;
 
-      hosts.golgi.modules = with modules; [
+      hosts.calcification.modules = with modules; [
           agenix.nixosModules.default
           auth
           caddy
           crowdsec.nixosModules.crowdsec
           crowdsec.nixosModules.crowdsec-firewall-bouncer
           crowdsec-setup
-          fava
-          forgejo
-          hardware-hetzner
-          headscale
           homepage
-          ntfy
-          mealie
-          memos
+          hardware-nas
           microbin
           site-config
           site-root
-          syncthing
           system
-          tailscale
-          uptime
-          vikunja
           zsh
           {
-            site = site-setup // {
-              server = {
-                host = "golgi";
-                authoritative = true;
-                ipv6 = "2a01:4ff:f0:cc83";
-              };
-              apps = app-setup;
+            site = {
+              domain = "dadams.org";
+              server.host = "calcification";
             };
           }
-        ];
-
-      hosts.nucleus.modules = with modules; [
-        agenix.nixosModules.default
-        caddy
-        crowdsec-setup
-        crowdsec.nixosModules.crowdsec
-        crowdsec.nixosModules.crowdsec-firewall-bouncer
-        declarative-jellyfin.nixosModules.default
-        hardware-nas
-        home-assistant
-        immich
-        sftpgo
-        site-config
-        streaming
-        system
-        tailscale
-        zsh
-        {
-          site = site-setup // {
-            server.host = "nucleus";
-            apps = app-setup // {
-              home-assistant.subdomain = "doonan";
-            };
-          };
-        }
       ];
 
       deploy.nodes = {
-        golgi = {
-          hostname = "${self.nixosConfigurations.golgi.config.site.cloudflare-bypass-subdomain}.${self.nixosConfigurations.golgi.config.site.domain}";
+        calcification = {
+          hostname = "192.168.188.93";
           fastConnection = false;
           profiles = {
             system = {
               sshUser = "admin";
               sshOpts = ["-o" "ControlMaster=no"];
               path =
-                inputs.deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.golgi;
-              user = "root";
-            };
-          };
-        };
-        nucleus = {
-          hostname = "nas.lan";
-          fastConnection = false;
-          profiles = {
-            system = {
-              sshUser = "admin";
-              sshOpts = ["-o" "ControlMaster=no"];
-              path =
-                inputs.deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.nucleus;
+                inputs.deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.calcification;
               user = "root";
             };
           };
