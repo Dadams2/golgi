@@ -95,23 +95,6 @@ in {
         enabled = true;
         min_length = 12;
       };
-      webauthn = {
-        enable_passkey_login = true;
-        experimental_enable_passkey_uv_two_factors = true;
-        selection_criteria = {
-          attachment = "platform";
-          user_verification = "preferred";
-        };
-        attestation_conveyance_preference = "direct";
-        filtering.prohibit_backup_eligibility = false;
-        metadata = {
-          enabled = true;
-          validate_trust_anchor = true;
-          validate_entry = false;
-          validate_status = true;
-          validate_entry_permit_zero_aaguid = false;
-        };
-      };
       authentication_backend.ldap = {
         address = "ldap://localhost:${toString config.services.lldap.settings.ldap_port}";
         base_dn = config.services.lldap.settings.ldap_base_dn;
@@ -126,14 +109,14 @@ in {
       };
       notifier.smtp = {
         address = "smtp.fastmail.com:587";
-        username = "tec@tecosaur.net";
+        username = "david@dadams2.com";
         sender = "${config.site.domain} — Authentication <services.authentication@${config.site.domain}>";
         subject = "{title}";
       };
-      log.level = "debug";
+      log.level = "info";
       identity_providers.oidc = {
         cors = {
-          endpoints = [ "authorization" "token" "revocation" "introspection" "userinfo" ];
+          endpoints = [ "token" ];
           allowed_origins_from_client_redirect_uris = true;
         };
         authorization_policies.default = {

@@ -11,7 +11,7 @@
       clevis = { # Requires the kernel modules: tpm_crb, tpm_tis, and igc (Intel NIC)
         enable = true;
         useTang = true;
-        devices."${config.fileSystems."/data".device}".secretFile = ../secrets/clevis-nucleus.jwe;
+        devices."${config.fileSystems."/data".device}".secretFile = ../secrets/clevis-calcification.jwe;
       };
       network.enable = true;
     };

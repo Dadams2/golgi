@@ -27,94 +27,38 @@
     flake-utils-plus.lib.mkFlake {
       inherit self inputs modules;
 
-      hosts.golgi.modules = with modules; [
+      hosts.calcification.modules = with modules; [
           agenix.nixosModules.default
           auth
           caddy
           crowdsec.nixosModules.crowdsec
           crowdsec.nixosModules.crowdsec-firewall-bouncer
           crowdsec-setup
-          fava
-          forgejo
-          hardware-hetzner
-          headscale
           homepage
-          ntfy
-          mealie
-          memos
+          hardware-nas
           microbin
           site-config
           site-root
-          syncthing
           system
-          tailscale
-          uptime
-          vikunja
           zsh
           {
             site = {
-              domain = "tecosaur.net";
-              server = {
-                authoritative = true;
-                ipv6 = "2a01:4ff:f0:cc83::";
-              };
-              apps = {
-                mealie.subdomain = "food";
-                microbin = {
-                  title = "μPaste";
-                  subdomain = "pastes";
-                  short-subdomain = "p";
-                  user-group = "paste";
-                };
-                forgejo = {
-                  subdomain = "code";
-                  user-group = "forge";
-                };
-                headscale.magicdns-subdomain = "on";
-                lldap.subdomain = "users";
-              };
+              domain = "dadams.org";
+              server.host = "calcification";
             };
           }
-        ];
-
-      hosts.nucleus.modules = with modules; [
-        agenix.nixosModules.default
-        hardware-nas
-        system
-        zsh
-        site-config
-        tailscale
-        {
-          site = {
-            domain = "tecosaur.net";
-            server.host = "nucleus";
-          };
-        }
       ];
 
       deploy.nodes = {
-        golgi = {
-          hostname = "${self.nixosConfigurations.golgi.config.site.cloudflare-bypass-subdomain}.${self.nixosConfigurations.golgi.config.site.domain}";
+        calcification = {
+          hostname = "192.168.188.93";
           fastConnection = false;
           profiles = {
             system = {
               sshUser = "admin";
               sshOpts = ["-o" "ControlMaster=no"];
               path =
-                inputs.deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.golgi;
-              user = "root";
-            };
-          };
-        };
-        nucleus = {
-          hostname = "nas.lan";
-          fastConnection = false;
-          profiles = {
-            system = {
-              sshUser = "admin";
-              sshOpts = ["-o" "ControlMaster=no"];
-              path =
-                inputs.deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.nucleus;
+                inputs.deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.calcification;
               user = "root";
             };
           };
