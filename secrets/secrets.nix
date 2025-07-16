@@ -1,8 +1,9 @@
 let
   base = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHUTckgbAuZzXHuZZANrFsIXtm5L8P1AAtAm0wE7bELa dadams@david-x570aorusmaster";
+  oxidation = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICo+Z6/pgjdomE8rHFT+EwlLaRIccFAFrBPw8mOzhfkp dadams@oxidation";
   calcification = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICrXlxKkyxDU7nC67Qt1r51SlPy4DqdSm1Zie2DIN4io root@calcification";
   mac = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGDvJOf3eKr8myTqabRJO/Mc/syqMn3FiSaIUKMkmKeF DAADAMS@distillation";
-  all = [ base calcification mac];
+  all = [ base calcification mac oxidation ];
 in
 {
   "authelia-jwt.age".publicKeys = all;
