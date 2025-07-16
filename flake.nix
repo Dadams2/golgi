@@ -73,10 +73,11 @@
               domain = "dadams.org";
               server.host = "calcification";
               server.admin = {
-              hashedPassword = "$6$xyz$gWnniaoEbqEkF6uAwHSCSKS0TOn3Fs1xNVthqD6S2F1TW177y9SlesYUHjdxhTcGC2ARUTVjImiq3xMvP6LBf1";
-              authorizedKeysKeys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGDvJOf3eKr8myTqabRJO/Mc/syqMn3FiSaIUKMkmKeF DAADAMS@distillation"
+                hashedPassword = "$6$xyz$gWnniaoEbqEkF6uAwHSCSKS0TOn3Fs1xNVthqD6S2F1TW177y9SlesYUHjdxhTcGC2ARUTVjImiq3xMvP6LBf1";
+                authorizedKeys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGDvJOf3eKr8myTqabRJO/Mc/syqMn3FiSaIUKMkmKeF DAADAMS@distillation"
                                       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHUTckgbAuZzXHuZZANrFsIXtm5L8P1AAtAm0wE7bELa dadams@david-x570aorusmaster"
-                                    ];
+                                      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICo+Z6/pgjdomE8rHFT+EwlLaRIccFAFrBPw8mOzhfkp dadams@oxidation"
+                                  ];
               };
             };
           }
