@@ -39,4 +39,10 @@ MaxRetentionSec=2months
   # Set the system revision to the flake revision
   # You can query this value with: $ nix-info -m
   system.configurationRevision = (if inputs.self ? rev then inputs.self.rev else null);
+
+  # useful system packages
+  environment.systemPackages = [
+    pkgs.vim
+    pkgs.jq
+  ];
 }
