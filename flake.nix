@@ -79,6 +79,8 @@
                                       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICo+Z6/pgjdomE8rHFT+EwlLaRIccFAFrBPw8mOzhfkp dadams@oxidation"
                                   ];
               };
+              server.authoritative = true;
+              server.ipv6 = "2401:d006:b206:4700:caff:bfff:fe05:efc2";
             };
           }
       ];
