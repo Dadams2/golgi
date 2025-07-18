@@ -45,6 +45,8 @@
             site = {
               domain = "dadams.org";
               server.host = "calcification";
+              server.authoritative = true;
+              server.ipv6 = "2401:d006:b206:4700:caff:bfff:fe05:efc2";
             };
           }
       ];
