@@ -7,6 +7,7 @@ let
             ${config.site.domain} @ * ${config.site.cloudflare-bypass-subdomain}
     }
     ip_source simple_http https://icanhazip.com
+    versions ${config.site.ipversions}
     ''
     else
     ''
