@@ -14,7 +14,7 @@
     # key generated with: `headscale preauthkeys create -u tec -e 99y --reusable`
     authKeyFile = config.age.secrets.tailscale-preauth.path;
     extraUpFlags = [
-      "--login-server=https://${config.site.apps.headscale.subdomain}.${config.site.domain}"
+#      "--login-server=https://${config.site.apps.headscale.subdomain}.${config.site.domain}"
       "--accept-dns=false" # No need for MagicDNS
       "--advertise-exit-node"
       "--reset"
