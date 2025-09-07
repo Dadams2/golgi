@@ -67,6 +67,7 @@
           site-config
           site-root
           system
+          tailscale
           zsh
           {
             site = {
