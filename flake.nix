@@ -91,7 +91,7 @@
 
       deploy.nodes = {
         calcification = {
-          hostname = "192.168.188.93";
+          hostname = "calcification";
           fastConnection = false;
           profiles = {
             system = {
