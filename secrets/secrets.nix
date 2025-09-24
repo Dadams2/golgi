@@ -16,9 +16,9 @@ in
   "fastmail.age".publicKeys = all;
   "headscale-oidc-secret.age".publicKeys = all;
   "headplane-env.age".publicKeys = all;
-  "home-assistant-secrets.age".publicKeys = nbase;
+  "home-assistant-secrets.age".publicKeys = all;
   "immich-oidc-secret.age".publicKeys = all;
-  "jellyfin-oidc-secret.age".publicKeys = nbase;
+  "jellyfin-oidc-secret.age".publicKeys = all;
   "lldap-admin-password.age".publicKeys = all;
   "lldap-jwt.age".publicKeys = all;
   "lldap-key-seed.age".publicKeys = all;
@@ -27,8 +27,8 @@ in
   "ntfy-webpush-keys-env.age".publicKeys = all;
   "postgres-authelia.age".publicKeys = all;
   "postgres-forgejo.age".publicKeys = all;
-  "paperless-oidc-secret.age".publicKeys = nbase;
-  "paperless-admin-password.age".publicKeys = nbase;
+  "paperless-oidc-secret.age".publicKeys = all;
+  "paperless-admin-password.age".publicKeys = all;
   "sftpgo-env.age".publicKeys = all;
   "sftpgo-oidc-secret.age".publicKeys = all;
   "tailscale-preauth.age".publicKeys = all;
