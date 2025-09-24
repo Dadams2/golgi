@@ -63,6 +63,7 @@
           crowdsec-setup
           homepage
           hardware-nas
+          memos
           microbin
           site-config
           site-root
