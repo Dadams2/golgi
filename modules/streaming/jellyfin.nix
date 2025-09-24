@@ -106,7 +106,8 @@ in {
     users = {
       admin = {
         mutable = false;
-        hashedPassword = "$PBKDF2-SHA512$iterations=210000$EBADD66838EB56B9C6A7E475DF14548A$AB58132A66852B837ADE581C99964B7DEC9842DC7920933E06D3F18A7E41527B2C224F361DC490F5EBC35D83A9E31DA234F33FBBC9E7FBA122260982C28E888F";
+        # nix run github:Sveske-Juice/declarative-jellyfin#genhash -- -i 210000 -l 128 -u -k "your super secret password"
+        hashedPassword = "$PBKDF2-SHA512$iterations=210000$EA56C6FEE9D18CCD63755B8A0FA84B86$4BF6EB5C5D2DE0055E43D84973D171EDE7A4BD12A27E500EEB35DCAF312A26651A33575061CE9E7D47A6A216FC37601BD9BB889AACFC69324C9CFD816EF7A41D";
         permissions = {
           isAdministrator = true;
         };
@@ -179,6 +180,8 @@ in {
   };
 
   systemd.tmpfiles.rules = [
+    "d ${config.services.jellyfin.configDir} 0755 ${config.services.jellyfin.user} ${config.services.jellyfin.group} - -"
+    "d ${config.services.jellyfin.dataDir}/plugins/configurations/ 0755 ${config.services.jellyfin.user} ${config.services.jellyfin.group} - -"
     "d ${media-dir} 0755 root users - -"
     "d ${movies-dir} 0775 ${config.services.jellyfin.user} users - -"
     "d ${shows-dir} 0775 ${config.services.jellyfin.user} users - -"

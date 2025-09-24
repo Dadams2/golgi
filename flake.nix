@@ -58,11 +58,13 @@
           agenix.nixosModules.default
           auth
           caddy
-          crowdsec.nixosModules.crowdsec
-          crowdsec.nixosModules.crowdsec-firewall-bouncer
-          crowdsec-setup
+          # crowdsec.nixosModules.crowdsec
+          # crowdsec.nixosModules.crowdsec-firewall-bouncer
+          # crowdsec-setup
+          # declarative-jellyfin.nixosModules.default
           homepage
           hardware-nas
+          # streaming
           memos
           microbin
           site-config
@@ -73,6 +75,10 @@
           {
             site = {
               domain = "dadams.org";
+              email = {
+                server = "smtp.fastmail.com";
+                username = "david@dadams2.com";
+              };
               server = {
                 host = "calcification";
                 authoritative = true;
@@ -85,6 +91,7 @@
                                         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICo+Z6/pgjdomE8rHFT+EwlLaRIccFAFrBPw8mOzhfkp dadams@oxidation"
                                     ];
                 };
+                ipversions = ["ipv4" "ipv6"];
               };
             };
           }
