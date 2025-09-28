@@ -83,7 +83,6 @@
                 host = "calcification";
                 authoritative = true;
                 ipv6 = "2401:d006:b206:4700:caff:bfff:fe05:efc2";
-                ipversions = "ipv6";
                 admin = {
                   hashedPassword = "$6$xyz$gWnniaoEbqEkF6uAwHSCSKS0TOn3Fs1xNVthqD6S2F1TW177y9SlesYUHjdxhTcGC2ARUTVjImiq3xMvP6LBf1";
                   authorizedKeys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGDvJOf3eKr8myTqabRJO/Mc/syqMn3FiSaIUKMkmKeF DAADAMS@distillation"
