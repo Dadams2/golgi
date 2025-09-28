@@ -180,8 +180,6 @@ in {
   };
 
   systemd.tmpfiles.rules = [
-    "d ${config.services.jellyfin.configDir} 0755 ${config.services.jellyfin.user} ${config.services.jellyfin.group} - -"
-    "d ${config.services.jellyfin.dataDir}/plugins/configurations/ 0755 ${config.services.jellyfin.user} ${config.services.jellyfin.group} - -"
     "d ${media-dir} 0755 root users - -"
     "d ${movies-dir} 0775 ${config.services.jellyfin.user} users - -"
     "d ${shows-dir} 0775 ${config.services.jellyfin.user} users - -"

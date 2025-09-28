@@ -61,10 +61,10 @@
           # crowdsec.nixosModules.crowdsec
           # crowdsec.nixosModules.crowdsec-firewall-bouncer
           # crowdsec-setup
-          # declarative-jellyfin.nixosModules.default
+          declarative-jellyfin.nixosModules.default
           homepage
           hardware-nas
-          # streaming
+          streaming
           memos
           microbin
           site-config
