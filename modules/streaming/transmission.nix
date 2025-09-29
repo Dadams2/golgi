@@ -11,7 +11,6 @@ in {
     enable = true;
     group = "users";
     package = pkgs.transmission_4;
-    rpc-port = config.site.apps.transmission.port;
     openRPCPort = true; # Make accessible over the LAN (but not WAN)
     webHome = pkgs.flood-for-transmission;
     settings = {
