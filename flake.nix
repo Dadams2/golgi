@@ -64,6 +64,7 @@
           declarative-jellyfin.nixosModules.default
           homepage
           hardware-nas
+          immich
           streaming
           memos
           microbin
