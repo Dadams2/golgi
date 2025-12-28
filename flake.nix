@@ -23,11 +23,6 @@
       site-config = import ./site.nix;
       site-setup = {
         domain = "tecosaur.net";
-        cloudflare-bypass-subdomain = "ssh";
-        server.admin = {
-          hashedPassword = "$6$ET8BLqODvw77VOmI$oun2gILUqBr/3WonH2FO1L.myMIM80KeyO5W1GrYhJTo./jk7XcG8B3vEEcbpfx3R9h.sR0VV187/MgnsnouB1";
-          authorizedKeys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOZZqcJOLdN+QFHKyW8ST2zz750+8TdvO9IT5geXpQVt tec@tranquillity" ];
-        };
         email = {
           server = "smtp.fastmail.com";
           username = "tec@tecosaur.net";
@@ -37,7 +32,6 @@
           secondary = "#67bc85";
         };
         apps = {
-          beszel.publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL6RP5omIbCzQsC/NizUg56JgpgMdl0/VXmCAE0VyJlq";
           mealie.subdomain = "food";
           microbin = {
             title = "μPaste";
@@ -47,17 +41,6 @@
           };
           forgejo = {
             user-group = "forge";
-            site-name = "Code by TEC";
-            site-description = "The personal Forgejo instance of TEC";
-            default-user-redirect = "tec";
-            served-repositories = [
-              {
-                repo = "tec/this-month-in-org";
-                rev = "html";
-                subdomain = "blog";
-                path = "tmio";
-              }
-            ];
           };
           headscale.enabled = true;
           # calibre-web.enabled = true;
@@ -71,91 +54,56 @@
     flake-utils-plus.lib.mkFlake {
       inherit self inputs modules;
 
-      hosts.golgi.modules = with modules; [
+      hosts.calcification.modules = with modules; [
           agenix.nixosModules.default
           auth
-          beszel-hub
-          beszel-agent
           caddy
-          # crowdsec
-          fava
-          forgejo
-          hardware-hetzner
-          headscale
+          declarative-jellyfin.nixosModules.default
           homepage
-          ntfy
-          mealie
+          hardware-nas
+          immich
+          streaming
           memos
           microbin
           site-config
           site-root
-          syncthing
           system
           tailscale
-          uptime
-          vikunja
           zsh
           {
-            site = nixpkgs.lib.recursiveUpdate site-setup {
+            site = {
+              domain = "dadams.org";
+              email = {
+                server = "smtp.fastmail.com";
+                username = "david@dadams2.com";
+              };
               server = {
-                host = "golgi";
+                host = "calcification";
                 authoritative = true;
-                ipv6 = "2a01:4ff:f0:cc83";
+                ipv6 = "2401:d006:b206:4700:caff:bfff:fe05:efc2";
+                admin = {
+                  hashedPassword = "$6$xyz$gWnniaoEbqEkF6uAwHSCSKS0TOn3Fs1xNVthqD6S2F1TW177y9SlesYUHjdxhTcGC2ARUTVjImiq3xMvP6LBf1";
+                  authorizedKeys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGDvJOf3eKr8myTqabRJO/Mc/syqMn3FiSaIUKMkmKeF DAADAMS@distillation"
+                                        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHUTckgbAuZzXHuZZANrFsIXtm5L8P1AAtAm0wE7bELa dadams@david-x570aorusmaster"
+                                        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICo+Z6/pgjdomE8rHFT+EwlLaRIccFAFrBPw8mOzhfkp dadams@oxidation"
+                                    ];
+                };
+                ipversions = ["ipv4" "ipv6"];
               };
             };
           }
-        ];
-
-      hosts.nucleus.modules = with modules; [
-        agenix.nixosModules.default
-        beszel-agent
-        caddy
-        # crowdsec # Error: failed to load Local API: loading online client credentials: open /var/lib/crowdsec/state/online_api_credentials.yaml: no such file or directory
-        declarative-jellyfin.nixosModules.default
-        hardware-nas
-        home-assistant
-        immich
-        lyrion
-        sftpgo
-        site-config
-        speedtest
-        streaming
-        system
-        tailscale
-        zsh
-        {
-          site = nixpkgs.lib.recursiveUpdate site-setup {
-            server.host = "nucleus";
-            apps.beszel.extra-filesystems = [ "/data__Data Volume" ];
-          };
-        }
       ];
 
       deploy.nodes = {
-        golgi = {
-          hostname = if self.nixosConfigurations.golgi.config.site.cloudflare-bypass-subdomain then
-            "${self.nixosConfigurations.golgi.config.site.cloudflare-bypass-subdomain}.${self.nixosConfigurations.golgi.config.site.domain}"
-                     else self.nixosConfigurations.golgi.config.site.domain;
+        calcification = {
+          hostname = "calcification";
           fastConnection = false;
           profiles = {
             system = {
               sshUser = "admin";
               sshOpts = ["-S" "none"];
               path =
-                inputs.deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.golgi;
-              user = "root";
-            };
-          };
-        };
-        nucleus = {
-          hostname = "nas.lan";
-          fastConnection = false;
-          profiles = {
-            system = {
-              sshUser = "admin";
-              sshOpts = ["-S" "none"];
-              path =
-                inputs.deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.nucleus;
+                inputs.deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.calcification;
               user = "root";
             };
           };
