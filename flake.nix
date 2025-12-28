@@ -85,11 +85,6 @@
         machines);
       site-setup = {
         domain = "tecosaur.net";
-        cloudflare-bypass-subdomain = "ssh";
-        server.admin = {
-          hashedPassword = "$6$ET8BLqODvw77VOmI$oun2gILUqBr/3WonH2FO1L.myMIM80KeyO5W1GrYhJTo./jk7XcG8B3vEEcbpfx3R9h.sR0VV187/MgnsnouB1";
-          authorizedKeys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOZZqcJOLdN+QFHKyW8ST2zz750+8TdvO9IT5geXpQVt tec@tranquillity" ];
-        };
         email = {
           server = "smtp.fastmail.com";
           username = "tec@tecosaur.net";
@@ -98,8 +93,7 @@
           primary = "#239a58";
           secondary = "#67bc85";
         };
-        apps = nixpkgs.lib.recursiveUpdate global-enabled-apps {
-          beszel.publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL6RP5omIbCzQsC/NizUg56JgpgMdl0/VXmCAE0VyJlq";
+        apps = {
           mealie.subdomain = "food";
           memos.groups.extra = [ "family" ];
           microbin = {
@@ -109,18 +103,7 @@
             groups.primary = "paste";
           };
           forgejo = {
-            groups.primary = "forge";
-            site-name = "Code by TEC";
-            site-description = "The personal Forgejo instance of TEC";
-            default-user-redirect = "tec";
-            served-repositories = [
-              {
-                repo = "tec/this-month-in-org";
-                rev = "html";
-                subdomain = "blog";
-                path = "tmio";
-              }
-            ];
+            user-group = "forge";
           };
           home-assistant.subdomain = "doonan";
           paperless.groups.extra = [ "family" ];
@@ -133,28 +116,61 @@
     in flake-utils-plus.lib.mkFlake {
       inherit self inputs modules;
 
-      hosts = (builtins.mapAttrs
-        (name: setup: {
-          modules = core-modules ++ setup.modules ++ [{
-            site = nixpkgs.lib.recursiveUpdate site-setup {
-              server = (setup.server or { }) // { host = name; };
+      hosts.calcification.modules = with modules; [
+          agenix.nixosModules.default
+          auth
+          caddy
+          declarative-jellyfin.nixosModules.default
+          homepage
+          hardware-nas
+          immich
+          streaming
+          memos
+          microbin
+          site-config
+          site-root
+          system
+          tailscale
+          zsh
+          {
+            site = {
+              domain = "dadams.org";
+              email = {
+                server = "smtp.fastmail.com";
+                username = "david@dadams2.com";
+              };
+              server = {
+                host = "calcification";
+                authoritative = true;
+                ipv6 = "2401:d006:b206:4700:caff:bfff:fe05:efc2";
+                admin = {
+                  hashedPassword = "$6$xyz$gWnniaoEbqEkF6uAwHSCSKS0TOn3Fs1xNVthqD6S2F1TW177y9SlesYUHjdxhTcGC2ARUTVjImiq3xMvP6LBf1";
+                  authorizedKeys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGDvJOf3eKr8myTqabRJO/Mc/syqMn3FiSaIUKMkmKeF DAADAMS@distillation"
+                                        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHUTckgbAuZzXHuZZANrFsIXtm5L8P1AAtAm0wE7bELa dadams@david-x570aorusmaster"
+                                        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICo+Z6/pgjdomE8rHFT+EwlLaRIccFAFrBPw8mOzhfkp dadams@oxidation"
+                                    ];
+                };
+                ipversions = ["ipv4" "ipv6"];
+              };
             };
-          }];
-        })
-        machines);
+          }
+      ];
 
-      deploy.nodes = (builtins.mapAttrs
-        (name: _: {
-          hostname = "_${name}.${site-setup.domain}";
+      deploy.nodes = {
+        calcification = {
+          hostname = "calcification";
           fastConnection = false;
-          profiles.system = {
-            sshUser = "admin";
-            sshOpts = [ "-S" "none" ];
-            path = inputs.deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations."${name}";
-            user = "root";
+          profiles = {
+            system = {
+              sshUser = "admin";
+              sshOpts = ["-S" "none"];
+              path =
+                inputs.deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.calcification;
+              user = "root";
+            };
           };
-        })
-        machines);
+        };
+      };
 
       outputsBuilder = (channels: {
         devShells.default = channels.nixpkgs.mkShell {
