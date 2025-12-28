@@ -380,13 +380,17 @@ function interactive_format_data_bcachefs() {
 # 
 # Entrypoint
 
-sysname="$(gum choose --header=" System designation" 'golgi (hetzner VM)' 'nucleus (bare-metal NAS)' | cut -d' ' -f1)"
+sysname="$(gum choose --header=" System designation" 'golgi (hetzner VM)' 'nucleus (bare-metal NAS)' 'calcification (bare-metal NAS)' | cut -d' ' -f1)"
 gum join "$(gum style --foreground=72 "System:")" "$sysname"
 
 if [ "$sysname" = "golgi" ]; then
     interactive_format_boot_btrfs
     generate_ssh_key
 elif [ "$sysname" = "nucleus" ]; then
+    interactive_format_boot_bcachefs
+    generate_ssh_key
+    interactive_format_data_bcachefs
+elif [ "$sysname" = "calcification" ]; then
     interactive_format_boot_bcachefs
     generate_ssh_key
     interactive_format_data_bcachefs
