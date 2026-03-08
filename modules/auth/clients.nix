@@ -108,6 +108,7 @@ in {
         })
         (mkPolicy config.site.apps.forgejo {
           user_policy = "one_factor";
+          extra_groups = [ "admin" ];
         })
         (mkPolicy config.site.apps.headscale {
           admins = false;

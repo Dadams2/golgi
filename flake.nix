@@ -22,14 +22,14 @@
       );
       site-config = import ./site.nix;
       site-setup = {
-        domain = "tecosaur.net";
+        domain = "dadams.org";
         email = {
           server = "smtp.fastmail.com";
-          username = "tec@tecosaur.net";
+          username = "david@dadams2.com";
         };
         accent = {
-          primary = "#239a58";
-          secondary = "#67bc85";
+          primary = "#33c1fbff";
+          secondary = "#3340fbff";
         };
         apps = {
           mealie.subdomain = "food";
@@ -41,11 +41,15 @@
           };
           forgejo = {
             user-group = "forge";
+            site-name = "Code by dadams";
+            site-description = "The personal Forgejo instance of dadams";
+            # default-user-redirect = "dadams";
           };
-          headscale.enabled = true;
+
+          # headscale.enabled = true;
           # calibre-web.enabled = true;
-          paperless.enabled = true;
-          sftpgo.enabled = true;
+          # paperless.enabled = true;
+          # sftpgo.enabled = true;
           immich.enabled = true;
           jellyfin.enabled = true;
         };
@@ -59,6 +63,7 @@
           auth
           caddy
           declarative-jellyfin.nixosModules.default
+          forgejo
           homepage
           hardware-nas
           immich
