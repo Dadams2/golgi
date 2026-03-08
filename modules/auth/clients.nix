@@ -103,15 +103,39 @@ in {
   services.authelia.instances.main.settings = {
     identity_providers.oidc = {
       authorization_policies = lib.mkMerge [
-        (mkPolicy config.site.apps.beszel { })
-        (mkPolicy config.site.apps.forgejo { })
-        (mkPolicy config.site.apps.headscale { })
-        (mkPolicy config.site.apps.immich { })
-        (mkPolicy config.site.apps.memos { })
-        (mkPolicy config.site.apps.vikunja { user_policy = "two_factor"; })
-        (mkPolicy config.site.apps.paperless { user_policy = "two_factor"; })
-        (mkPolicy config.site.apps.sftpgo { user_policy = "two_factor"; })
-        (mkPolicy config.site.apps.warracker { })
+        (mkPolicy config.site.apps.beszel {
+          extra_groups = [ "admin" ];
+        })
+        (mkPolicy config.site.apps.forgejo {
+          user_policy = "one_factor";
+          extra_groups = [ "admin" ];
+        })
+        (mkPolicy config.site.apps.headscale {
+          admins = false;
+        })
+        (mkPolicy config.site.apps.immich {
+          user_policy = "one_factor";
+          extra_groups = [ "family" ];
+        })
+        (mkPolicy config.site.apps.memos {
+          extra_groups = [ "family" ];
+        })
+        (mkPolicy config.site.apps.vikunja {
+          user_policy = "two_factor";
+        })
+        (mkPolicy config.site.apps.paperless {
+          user_policy = "two_factor";
+          extra_groups = [ "family" ];
+        })
+        (mkPolicy config.site.apps.sftpgo {
+          user_policy = "two_factor";
+          extra_groups = [ "family" ];
+          admins = false;
+        })
+        (mkPolicy config.site.apps.warracker {
+          user_policy = "one_factor";
+          extra_groups = [ "family" ];
+        })
       ];
       claims_policies = {
         sftpgo = {
