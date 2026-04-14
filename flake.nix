@@ -126,6 +126,7 @@
           caddy
           declarative-jellyfin.nixosModules.default
           forgejo
+          home-assistant
           homepage
           hardware-nas
           immich
