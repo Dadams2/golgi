@@ -19,6 +19,21 @@ let
     versions ${lib.strings.concatStringsSep " " config.site.server.ipversions}
     dynamic_domains
     '';
+  caddy-go126 = pkgs.callPackage "${pkgs.path}/pkgs/by-name/ca/caddy/package.nix" {
+    buildGo125Module = pkgs.buildGo126Module;
+    caddy = caddy-go126;
+  };
+  caddy-with-plugins = (pkgs.callPackage "${pkgs.path}/pkgs/by-name/ca/caddy/plugins.nix" {
+    caddy = caddy-go126;
+  }) {
+    plugins = [
+      "github.com/caddy-dns/cloudflare@v0.2.2"
+      "github.com/mholt/caddy-dynamicdns@v0.0.0-20251020155855-d8f490a28db6"
+      "github.com/tecosaur/caddy-fs-git@v0.0.0-20240109175104-ef9d0ab232f4"
+      "github.com/caddyserver/replace-response@v0.0.0-20250618171559-80962887e4c6"
+    ];
+    hash = "sha256-FDEIlzLbJnmU5PgDhKPHtYtB0MHyC7PXvzZJXbaUH7A=";
+  };
 in {
   networking.firewall.allowedTCPPorts = [ 80 443 ];
   networking.firewall.allowedUDPPorts = [ 443 ];
@@ -40,15 +55,7 @@ in {
 
   services.caddy = {
       enable = true;
-      package = pkgs.caddy.withPlugins {
-        plugins = [
-          "github.com/caddy-dns/cloudflare@v0.2.2"
-          "github.com/mholt/caddy-dynamicdns@v0.0.0-20251020155855-d8f490a28db6"
-          "github.com/tecosaur/caddy-fs-git@v0.0.0-20240109175104-ef9d0ab232f4"
-          "github.com/caddyserver/replace-response@v0.0.0-20250618171559-80962887e4c6"
-        ];
-        hash = "sha256-9pDBSPrGSOsFNg121EyhBxceeXojU7LjbfXp09eT6co=";
-      };
+      package = caddy-with-plugins;
       globalConfig =
         ''
         acme_dns cloudflare {env.CLOUDFLARE_AUTH_TOKEN}
