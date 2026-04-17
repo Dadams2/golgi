@@ -90,6 +90,8 @@ in {
         };
       };
       default_config = {};
+      script = "!include scripts.yaml";
+      scene = "!include scenes.yaml";
       automation = "!include automations.yaml";
       homeassistant = {
         external_url = "https://${ha-domain}";
@@ -122,9 +124,18 @@ in {
   '';
 
   systemd.services.home-assistant.preStart = lib.mkAfter ''
-    automations_file="${config.services.home-assistant.configDir}/automations.yaml"
-    if [ ! -s "$automations_file" ]; then
-      printf '[]\n' > "$automations_file"
-    fi
+    ensure_yaml_file() {
+      local path="$1"
+      local initial_contents="$2"
+
+      if [ ! -s "$path" ]; then
+        printf '%s\n' "$initial_contents" > "$path"
+      fi
+    }
+
+    config_dir="${config.services.home-assistant.configDir}"
+    ensure_yaml_file "$config_dir/automations.yaml" '[]'
+    ensure_yaml_file "$config_dir/scripts.yaml" '{}'
+    ensure_yaml_file "$config_dir/scenes.yaml" '[]'
   '';
 }
