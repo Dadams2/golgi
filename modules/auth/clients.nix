@@ -106,6 +106,7 @@ in {
         (mkPolicy config.site.apps.beszel { })
         (mkPolicy config.site.apps.forgejo { })
         (mkPolicy config.site.apps.headscale { })
+        (mkPolicy config.site.apps.home-assistant { user_policy = "two_factor"; })
         (mkPolicy config.site.apps.immich { })
         (mkPolicy config.site.apps.memos { })
         (mkPolicy config.site.apps.vikunja { user_policy = "two_factor"; })
@@ -135,6 +136,10 @@ in {
         (mkClient config.site.apps.headscale {
           redirect_paths = [ "oidc/callback" ];
           claims_policy = "headscale";
+        })
+        (mkClient config.site.apps.home-assistant {
+          redirect_paths = [ "auth/oidc/callback" ];
+          token_endpoint_auth_method = "client_secret_post";
         })
         (mkClient config.site.apps.immich {
           redirect_paths = [ "auth/login" "user-settings" ];
