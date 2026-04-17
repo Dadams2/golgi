@@ -137,6 +137,7 @@
           site-root
           system
           tailscale
+          uptime
           zsh
           {
             site = {
