@@ -6,6 +6,7 @@ let
   all = [ base calcification mac oxidation ];
 in
 {
+  "airvpn-wireguard.age".publicKeys = all;
   "authelia-jwt.age".publicKeys = all;
   "authelia-oidc-hmac.age".publicKeys = all;
   "authelia-oidc-issuer.pem.age".publicKeys = all;

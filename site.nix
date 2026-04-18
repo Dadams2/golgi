@@ -324,6 +324,14 @@ in {
         subdomain = "memos";
         port = 5230;
       };
+      bazarr = mkAppOption {
+        name = "Bazarr";
+        homepage = "https://www.bazarr.media";
+        description = "subtitle management";
+        simpleicon = "bazarr";
+        subdomain = "subtitles";
+        port = 6767;
+      };
       microbin = mkAppOption {
         name = "Microbin";
         homepage = "https://github.com/szabodanika/microbin";
@@ -407,6 +415,22 @@ in {
         port = 8384;
         admin = null;
       };
+      prowlarr = mkAppOption {
+        name = "Prowlarr";
+        homepage = "https://prowlarr.com";
+        description = "indexer management";
+        simpleicon = "prowlarr";
+        subdomain = "indexers";
+        port = 9696;
+      };
+      radarr = mkAppOption {
+        name = "Radarr";
+        homepage = "https://radarr.video";
+        description = "movie collection management";
+        simpleicon = "radarr";
+        subdomain = "movies";
+        port = 7878;
+      };
       transmission = mkAppOption {
         name = "Transmission";
         homepage = "https://transmissionbt.com";
@@ -414,6 +438,21 @@ in {
         simpleicon = "transmission";
         subdomain = "torrent";
         port = 9092;
+        extraOptions = {
+          peer-port = lib.mkOption {
+            type = lib.types.int;
+            default = 50000;
+            description = "Peer port used by Transmission for incoming torrent connections.";
+          };
+        };
+      };
+      sonarr = mkAppOption {
+        name = "Sonarr";
+        homepage = "https://sonarr.tv";
+        description = "series collection management";
+        simpleicon = "sonarr";
+        subdomain = "shows";
+        port = 8989;
       };
       lldap = mkAppOption {
         name = "LLDAP";

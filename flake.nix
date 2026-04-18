@@ -7,6 +7,10 @@
     agenix.url = "github:ryantm/agenix";
     declarative-jellyfin.url = "github:Sveske-Juice/declarative-jellyfin";
     declarative-jellyfin.inputs.nixpkgs.follows = "nixpkgs";
+    nixarr = {
+      url = "github:rasmus-kirk/nixarr";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     deploy-rs = {
       url = github:serokell/deploy-rs;
       inputs.nixpkgs.follows = "nixpkgs";
@@ -15,7 +19,7 @@
 
   nixConfig.sandbox = "relaxed";
 
-  outputs = inputs@{ self, nixpkgs, flake-utils-plus, agenix, declarative-jellyfin, ... }:
+  outputs = inputs@{ self, nixpkgs, flake-utils-plus, agenix, declarative-jellyfin, nixarr, ... }:
     let
       site-config = import ./site.nix;
       modules = flake-utils-plus.lib.exportModules (
@@ -125,14 +129,16 @@
           auth
           caddy
           declarative-jellyfin.nixosModules.default
+          nixarr.nixosModules.default
           forgejo
           home-assistant
           homepage
           hardware-nas
           immich
-          streaming
+          ./modules/streaming/jellyfin.nix
           memos
           microbin
+          ./modules/nixarrStack.nix
           site-config
           site-root
           system

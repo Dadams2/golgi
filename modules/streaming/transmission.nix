@@ -21,6 +21,7 @@ in {
       rpc-authentication-required = false;
       ratio-limit-enabled = true;
       ratio-limit = 2;
+      peer-port = 50647;
       download-dir = download-dir;
       incomplete-dir = incomplete-dir;
       rename-partial-files = true;
