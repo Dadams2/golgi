@@ -39,6 +39,7 @@ in {
       "camera"
       "cast"
       "esphome"
+      "google_translate"
       "immich"
       "linkplay"
       "matter"
@@ -96,6 +97,9 @@ in {
       homeassistant = {
         external_url = "https://${ha-domain}";
         time_zone = "!secret time_zone";
+        media_dirs = {
+          local = "/data/media";
+        };
       };
       zone = [
         {
@@ -103,7 +107,7 @@ in {
           icon = "mdi:home";
           latitude = "!secret home_latitude";
           longitude = "!secret home_longitude";
-          radius = 80;
+          radius = 40;
         }
       ];
     };
