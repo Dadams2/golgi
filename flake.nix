@@ -135,10 +135,10 @@
           homepage
           hardware-nas
           immich
-          ./modules/streaming/jellyfin.nix
+          streaming
           memos
           microbin
-          ./modules/nixarrStack.nix
+          scrutiny
           site-config
           site-root
           system
