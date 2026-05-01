@@ -1,6 +1,28 @@
 { config, lib, pkgs, ... }:
 
 let
+  mkVpnExtraOptions = {
+    enableDefault ? builtins.pathExists ./secrets/airvpn-wireguard.age,
+    accessibleFrom ? [ "100.64.0.0/10" ],
+  }: {
+    vpn = {
+      enable = lib.mkOption {
+        type = lib.types.bool;
+        default = enableDefault;
+        description = "Whether the service should run inside the AirVPN WireGuard namespace.";
+      };
+      accessibleFrom = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = accessibleFrom;
+        description = "Additional source ranges allowed to reach the service through the VPN namespace.";
+      };
+      exposeOnLAN = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Whether the service should stay directly reachable from LAN subnets when VPN confinement is enabled.";
+      };
+    };
+  };
   mkAppOption = { name, description, homepage, simpleicon ? null,
                   service ? name, subdomain, port, admin ? "admin", extra-groups ? [],
                   extraOptions ? {} }:
@@ -422,6 +444,7 @@ in {
         simpleicon = "prowlarr";
         subdomain = "indexers";
         port = 9696;
+        extraOptions = mkVpnExtraOptions { };
       };
       radarr = mkAppOption {
         name = "Radarr";
@@ -430,6 +453,7 @@ in {
         simpleicon = "radarr";
         subdomain = "movies";
         port = 7878;
+        extraOptions = mkVpnExtraOptions { };
       };
       transmission = mkAppOption {
         name = "Transmission";
@@ -438,7 +462,7 @@ in {
         simpleicon = "transmission";
         subdomain = "torrent";
         port = 9092;
-        extraOptions = {
+        extraOptions = (mkVpnExtraOptions { }) // {
           peer-port = lib.mkOption {
             type = lib.types.int;
             default = 50000;
@@ -453,6 +477,7 @@ in {
         simpleicon = "sonarr";
         subdomain = "shows";
         port = 8989;
+        extraOptions = mkVpnExtraOptions { };
       };
       lldap = mkAppOption {
         name = "LLDAP";

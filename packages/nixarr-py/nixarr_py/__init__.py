@@ -1,0 +1,1 @@
+"""Local copy of nixarr-py for Arr settings sync."""
