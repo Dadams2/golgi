@@ -90,12 +90,13 @@ in {
           ratio-limit = 2;
           rpc-bind-address = "0.0.0.0";
           rpc-port = config.site.apps.transmission.port;
-          rpc-whitelist = "127.0.0.1,192.168.1.*,100.*.*.*";
+          rpc-whitelist = "127.0.0.1,192.168.1.*,192.168.15.*,100.*.*.*";
           rpc-host-whitelist-enabled = true;
           rpc-host-whitelist = lib.concatStringsSep "," [
             "localhost"
             "127.0.0.1"
             "192.168.1.*"
+            "192.168.15.*"
             transmission-domain
             "100.*.*.*"
             "nas.lan"
