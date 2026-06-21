@@ -53,24 +53,63 @@ in {
         enable = true;
         openFirewall = false;
         port = config.site.apps.bazarr.port;
+        
+        # Automatically configure Sonarr and Radarr connections in Bazarr
+        settings-sync = {
+          sonarr = {
+            enable = true;
+            config = {
+              sync_only_monitored_series = true;
+              sync_only_monitored_episodes = true;
+            };
+          };
+          radarr = {
+            enable = true;
+            config = {
+              sync_only_monitored_movies = true;
+            };
+          };
+        };
       };
 
       prowlarr = {
         enable = true;
         openFirewall = false;
         port = config.site.apps.prowlarr.port;
+        
+        # Automatically sync enabled Nixarr apps (Sonarr/Radarr) to Prowlarr
+        settings-sync = {
+          enable-nixarr-apps = true;
+        };
       };
 
       radarr = {
         enable = true;
         openFirewall = false;
         port = config.site.apps.radarr.port;
+        
+        # Automatically configure Transmission as a download client
+        settings-sync = {
+          transmission = {
+            enable = true;
+            # ugly hack to force the host to be the VPN gateway if the AirVPN secret is present, otherwise default to localhost
+            config.fields.host = if has-airvpn-secret then lib.mkForce "192.168.15.1" else "localhost";
+          };
+        };
       };
 
       sonarr = {
         enable = true;
         openFirewall = false;
         port = config.site.apps.sonarr.port;
+        
+        # Automatically configure Transmission as a download client
+        settings-sync = {
+          transmission = {
+            enable = true;
+            config.fields.host = if has-airvpn-secret then lib.mkForce "192.168.15.1" else "localhost";
+          };
+        };
       };
 
       transmission = {
@@ -123,19 +162,14 @@ in {
       "d ${incomplete-dir} 0775 ${config.util-nixarr.globals.transmission.user} ${config.util-nixarr.globals.transmission.group} - -"
     ];
 
-    systemd.services.prowlarr.environment = {
-      PROWLARR__AUTHENTICATIONMETHOD = "External";
-      PROWLARR__AUTHENTICATIONREQUIRED = "DisabledForLocalAddresses";
-    };
+    services.prowlarr.settings.auth.required = "DisabledForLocalAddresses";
+    services.radarr.settings.auth.required = "DisabledForLocalAddresses";
+    services.sonarr.settings.auth.required = "DisabledForLocalAddresses";
 
-    systemd.services.radarr.environment = {
-      RADARR__AUTHENTICATIONMETHOD = "External";
-      RADARR__AUTHENTICATIONREQUIRED = "DisabledForLocalAddresses";
-    };
-
-    systemd.services.sonarr.environment = {
-      SONARR__AUTHENTICATIONMETHOD = "External";
-      SONARR__AUTHENTICATIONREQUIRED = "DisabledForLocalAddresses";
+    # Add Flaresolverr as a standard NixOS service to solve captchas for Prowlarr
+    services.flaresolverr = {
+      enable = true;
+      port = 8191;
     };
 
     services.nginx = lib.mkIf has-airvpn-secret {
