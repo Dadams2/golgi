@@ -5,6 +5,7 @@ let
   ha-oidc-domain = "login-${config.site.apps.home-assistant.subdomain}.${config.site.domain}";
   authelia-domain = "${config.site.apps.authelia.subdomain}.${config.site.domain}";
   ha-package = pkgs.home-assistant.override {
+    extraPackages = ps: with ps; [ getmac ];
     packageOverrides = self: super: {
       radios = super.radios.overridePythonAttrs (oldAttrs: {
         pythonRelaxDeps = (oldAttrs.pythonRelaxDeps or [ ]) ++ [ "pycountry" ];

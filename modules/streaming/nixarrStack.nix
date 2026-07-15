@@ -9,8 +9,26 @@ let
   sonarr-domain = "${config.site.apps.sonarr.subdomain}.${config.site.domain}";
   prowlarr-domain = "${config.site.apps.prowlarr.subdomain}.${config.site.domain}";
   bazarr-domain = "${config.site.apps.bazarr.subdomain}.${config.site.domain}";
+  media-dir = "/data/media";
+  movies-dir = "${media-dir}/movies";
+  shows-dir = "${media-dir}/shows";
+  anime-dir = "${media-dir}/anime";
+  books-dir = "${media-dir}/books";
+  music-dir = "${media-dir}/music";
   download-dir = "/data/media/downloads";
   incomplete-dir = "${download-dir}/.incomplete";
+
+  media-group = "media";
+
+    arrMediaUsers = [
+    config.util-nixarr.globals.sonarr.user
+    config.util-nixarr.globals.radarr.user
+    config.util-nixarr.globals.bazarr.user
+    config.util-nixarr.globals.prowlarr.user
+    config.util-nixarr.globals.transmission.user
+    config.services.jellyfin.user
+  ];
+
   transmission-upstream =
     if has-airvpn-secret
     then "192.168.15.1:${toString config.site.apps.transmission.port}"
@@ -29,6 +47,10 @@ in {
       transmission.enabled = true;
     };
 
+    users.users = lib.genAttrs arrMediaUsers (_user: {
+      extraGroups = [ media-group ];
+    });
+
     age.secrets = lib.mkIf has-airvpn-secret {
       airvpn-wireguard = {
         owner = "root";
@@ -40,12 +62,12 @@ in {
 
     nixarr = {
       enable = true;
-      mediaDir = "/data/media";
+      mediaDir = media-dir;
       mediaUsers = [ config.services.jellyfin.user ];
 
       vpn = lib.mkIf has-airvpn-secret {
         enable = true;
-        accessibleFrom = [ "100.64.0.0/10" ];
+        accessibleFrom = [ "100.64.0.0/10"];
         wgConf = config.age.secrets.airvpn-wireguard.path;
       };
 
@@ -154,13 +176,34 @@ in {
     };
 
     systemd.tmpfiles.rules = [
+      # Parent path. Keep /data root-owned, but traversable.
+      "d /data 0755 root root - -"
+
+      # Shared media root and category directories.
+      # 2775 = rwxrwsr-x. The 2 sets setgid so new children inherit group media.
+      "d ${media-dir} 2775 root ${media-group} - -"
+      "d ${movies-dir} 2775 root ${media-group} - -"
+      "d ${shows-dir} 2775 root ${media-group} - -"
+      "d ${anime-dir} 2775 root ${media-group} - -"
+      "d ${music-dir} 2775 root ${media-group} - -"
+      "d ${books-dir} 2775 root ${media-group} - -"
+
+      # Downloads must also be shared, because Transmission creates files that
+      # Sonarr/Radarr later import, move, copy, or hardlink.
+      "d ${download-dir} 2775 ${config.util-nixarr.globals.transmission.user} ${media-group} - -"
+      "d ${incomplete-dir} 2775 ${config.util-nixarr.globals.transmission.user} ${media-group} - -"
+
+      # App state dirs can stay private.
       "d /data/.state/nixarr/radarr 0700 ${config.util-nixarr.globals.radarr.user} root - -"
       "d /data/.state/nixarr/sonarr 0700 ${config.util-nixarr.globals.sonarr.user} root - -"
       "z /data/.state/nixarr/radarr 0700 ${config.util-nixarr.globals.radarr.user} root - -"
       "z /data/.state/nixarr/sonarr 0700 ${config.util-nixarr.globals.sonarr.user} root - -"
-      "d ${download-dir} 0775 ${config.util-nixarr.globals.transmission.user} ${config.util-nixarr.globals.transmission.group} - -"
-      "d ${incomplete-dir} 0775 ${config.util-nixarr.globals.transmission.user} ${config.util-nixarr.globals.transmission.group} - -"
-    ];
+  ];
+
+    # systemd.services.sonarr.serviceConfig.UMask = lib.mkForce "0007";
+    # systemd.services.radarr.serviceConfig.UMask = lib.mkForce "0007";
+    # systemd.services.bazarr.serviceConfig.UMask = lib.mkForce "0007";
+
 
     services.prowlarr.settings.auth.required = "DisabledForLocalAddresses";
     services.radarr.settings.auth.required = "DisabledForLocalAddresses";
@@ -170,6 +213,38 @@ in {
     services.flaresolverr = {
       enable = true;
       port = 8191;
+    };
+
+    # Make sure flaresolverr (and the Chrome it spawns) only uses ipv4, as there
+    # are weird issues with ipv6. Note: we use RestrictAddressFamilies here
+    # rather than IPAddressDeny/IPAddressAllow. The latter silently *drops*
+    # matched packets at the nftables level (for the whole cgroup, including
+    # the Chrome child process), which makes any IPv6 connection attempt hang
+    # until the kernel's TCP retry timeout expires (multiple minutes) instead
+    # of failing fast. RestrictAddressFamilies blocks socket(AF_INET6, ...) at
+    # the syscall level, so IPv6 attempts fail instantly and fall back to IPv4.
+    systemd.services.flaresolverr = {
+      environment = {
+        LOG_LEVEL = "debug";
+        HOST = "127.0.0.1";
+      };
+
+      serviceConfig = {
+        RestrictAddressFamilies = [
+          "AF_UNIX"
+          "AF_INET"
+        ];
+      };
+    };
+
+    systemd.services.prowlarr.serviceConfig = {
+      RestrictAddressFamilies = [
+        "AF_UNIX"
+        "AF_INET"
+      ];
+      environment = {
+        LOG_LEVEL = "debug";
+      }
     };
 
     services.nginx = lib.mkIf has-airvpn-secret {
