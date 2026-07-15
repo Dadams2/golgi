@@ -237,14 +237,15 @@ in {
       };
     };
 
+    systemd.services.prowlarr.environment = {
+      LOG_LEVEL = "debug";
+    };
+
     systemd.services.prowlarr.serviceConfig = {
       RestrictAddressFamilies = [
         "AF_UNIX"
         "AF_INET"
       ];
-      environment = {
-        LOG_LEVEL = "debug";
-      }
     };
 
     services.nginx = lib.mkIf has-airvpn-secret {
