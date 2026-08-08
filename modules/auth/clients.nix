@@ -223,6 +223,11 @@ in {
         domain = config.site.domain;
         policy = "one_factor";
       }]
+      (mkAccessControl config.site.apps.bazarr { })
+      (mkAccessControl config.site.apps.prowlarr { })
+      (mkAccessControl config.site.apps.radarr { })
+      (mkAccessControl config.site.apps.sonarr { })
+      (mkAccessControl config.site.apps.transmission { })
       (mkAccessControl config.site.apps.microbin { })
       (mkAccessControl config.site.apps.multi-scrobbler {
         subject = [ "group:${config.site.apps.multi-scrobbler.groups.admin}" ];

@@ -1,6 +1,6 @@
 {
   imports = [
     ./jellyfin.nix
-    ./transmission.nix
+    ./nixarrStack.nix
   ];
 }
