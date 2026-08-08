@@ -1,10 +1,11 @@
 let
-  base = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOZZqcJOLdN+QFHKyW8ST2zz750+8TdvO9IT5geXpQVt tec@tranquillity";
-  golgi = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEEmWE6y+gkNdOdgooahbgalxguyoPos7dKCAeVzokm/ root@golgi";
-  nucleus = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOeDXHlRp0k18hSszwUYw+5FiNbPE+XLxRdXSqUUdYOF root@nucleus";
-  gbase = [ base golgi ];
-  nbase = [ base nucleus ];
-  all = [ base golgi nucleus ];
+  base = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHUTckgbAuZzXHuZZANrFsIXtm5L8P1AAtAm0wE7bELa dadams@david-x570aorusmaster";
+  oxidation = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICo+Z6/pgjdomE8rHFT+EwlLaRIccFAFrBPw8mOzhfkp dadams@oxidation";
+  calcification = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICrXlxKkyxDU7nC67Qt1r51SlPy4DqdSm1Zie2DIN4io root@calcification";
+  mac = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGDvJOf3eKr8myTqabRJO/Mc/syqMn3FiSaIUKMkmKeF DAADAMS@distillation";
+  gbase = [ base calcification mac oxidation ];
+  nbase = [ base calcification mac oxidation ];
+  all = [ base calcification mac oxidation ];
 in
 {
   # Paired with the `*-hash.txt` digests; both written by `make-oidc.sh`.
@@ -25,6 +26,7 @@ in
   "oidc/windmill-secret.age".publicKeys = nbase;
 
   # Set by hand: from a third party, or from a service that alone can mint it.
+  "credentials/airvpn-wireguard.age".publicKeys = all;
   "credentials/beszel-token.age" = { publicKeys = all; description = "Beszel hub token"; };
   "credentials/bunny-dns-key.age" = { publicKeys = all; description = "Bunny API key, for dns-pooler; it also keys the peer channel, so every node needs the same one"; };
   "credentials/cloudflare-api-env.age" = { publicKeys = all; description = "Cloudflare API token, as CLOUDFLARE_API_TOKEN=..."; };
@@ -60,6 +62,10 @@ in
   "keys/lldap-key-seed.age".publicKeys = all;
   "keys/multi-scrobbler-jellyfin.age".publicKeys = all;
   "keys/multi-scrobbler-koito.age".publicKeys = all;
+  "keys/trek-encryption.age".publicKeys = all;
+  "keys/wg-base.age".publicKeys = all;
+  "keys/wg-calcification.age".publicKeys = all;
   "keys/wg-golgi.age".publicKeys = gbase;
+  "keys/wg-mac.age".publicKeys = all;
   "keys/wg-nucleus.age".publicKeys = nbase;
 }
