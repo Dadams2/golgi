@@ -351,14 +351,14 @@ function interactive_set_encryption() {
     gum style --bold --foreground="72" "== Clevis JWE token =="
 
     gum style --border=rounded --border-foreground="45" \
-        "Paste the Clevis JWE content into secrets/keys/clevis-$sysname.jwe and then push it"
+        "Paste the Clevis JWE content into secrets/clevis-$sysname.jwe and then push it"
     gum confirm --affirmative="Done" --negative="Abort" "Is the Clevis JWE file committed and pushed?"
     gum spin --title="Pulling..." --show-stdout -- git -C "$scriptdir" pull --rebase
-    while [ ! -f "$scriptdir/secrets/keys/clevis-$sysname.jwe" ]; do
+    while [ ! -f "$scriptdir/secrets/clevis-$sysname.jwe" ]; do
         gum confirm --affirmative="Retry" --negative="Abort" --selected.background=209 --prompt.foreground=181 "File does not exist!" || exit 1
         gum spin --title="Pulling..." --show-stdout -- git -C "$scriptdir" pull --rebase
     done
-    while [ "$(cat "$scriptdir/secrets/keys/clevis-$sysname.jwe")" != "$clevis_jwe" ]; do
+    while [ "$(cat "$scriptdir/secrets/clevis-$sysname.jwe")" != "$clevis_jwe" ]; do
         gum confirm --affirmative="Retry" --negative="Abort" --selected.background=209 --prompt.foreground=181 "File content does not match!" || exit 1
         gum spin --title="Pulling..." --show-stdout -- git -C "$scriptdir" pull --rebase
     done
@@ -437,7 +437,7 @@ function interactive_restore_host_state() {
 # 
 # Entrypoint
 
-sysname="$(gum choose --header=" System designation" 'golgi (hetzner VM)' 'nucleus (bare-metal NAS)' | cut -d' ' -f1)"
+sysname="$(gum choose --header=" System designation" 'golgi (hetzner VM)' 'nucleus (bare-metal NAS)' 'calcification (bare-metal NAS)' | cut -d' ' -f1)"
 gum join "$(gum style --foreground=72 "System:")" "$sysname"
 
 if [ "$sysname" = "golgi" ]; then
@@ -449,6 +449,10 @@ elif [ "$sysname" = "nucleus" ]; then
     mount_data
     interactive_restore_host_state
     generate_ssh_key
+elif [ "$sysname" = "calcification" ]; then
+    interactive_format_boot_bcachefs
+    generate_ssh_key
+    interactive_format_data_bcachefs
 fi
 
 gum style --border=thick "Installing NixOS"

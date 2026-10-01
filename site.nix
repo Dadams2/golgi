@@ -752,7 +752,7 @@ in {
             default = 50000;
             description = "Peer port used by Transmission for incoming torrent connections.";
           };
-         }
+         };
       };
       sonarr = mkAppOption {
         name = "Sonarr";

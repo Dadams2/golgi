@@ -2,7 +2,7 @@
 
 let
   has-nixarr-options = options ? nixarr;
-  airvpn-secret-file = ../../secrets/airvpn-wireguard.age;
+  airvpn-secret-file = ../../secrets/credentials/airvpn-wireguard.age;
   has-airvpn-secret = builtins.pathExists airvpn-secret-file;
   transmission-domain = "${config.site.apps.transmission.subdomain}.${config.site.domain}";
   radarr-domain = "${config.site.apps.radarr.subdomain}.${config.site.domain}";
