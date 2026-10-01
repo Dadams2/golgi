@@ -4,25 +4,16 @@ let
   ha-domain = "${config.site.apps.home-assistant.subdomain}.${config.site.domain}";
   ha-oidc-domain = "login-${config.site.apps.home-assistant.subdomain}.${config.site.domain}";
   authelia-domain = "${config.site.apps.authelia.subdomain}.${config.site.domain}";
-  ha-package = pkgs.home-assistant.override {
-    extraPackages = ps: with ps; [ getmac ];
-    packageOverrides = self: super: {
-      radios = super.radios.overridePythonAttrs (oldAttrs: {
-        pythonRelaxDeps = (oldAttrs.pythonRelaxDeps or [ ]) ++ [ "pycountry" ];
-      });
-    };
-  };
-  hax-bambu = ha-package.python.pkgs.callPackage ../packages/ha-bambu.nix { };
-  hax-bom = ha-package.python.pkgs.callPackage ../packages/ha-bom.nix { };
-  hax-vzug = ha-package.python.pkgs.callPackage ../packages/ha-vzug.nix { };
-in {
+ hax-bambu = pkgs.home-assistant.python3Packages.callPackage ../packages/ha-bambu.nix { };
+  hax-bom = pkgs.home-assistant.python3Packages.callPackage ../packages/ha-bom.nix { };
+  hax-vzug = pkgs.home-assistant.python3Packages.callPackage ../packages/ha-vzug.nix { };  chip-ota-provider-app = pkgs.callPackage ../packages/chip-ota-provider-app.nix { };in {
   site.apps.home-assistant.enabled = true;
   site.apps.home-assistant.groups.primary = lib.mkDefault "home-assistant";
 
   age.secrets.home-assistant-secrets = {
     owner = "hass";
     group = "users";
-    file = ../secrets/home-assistant-secrets.age;
+   file = ../secrets/credentials/home-assistant-secrets.age;
     path = "/var/lib/hass/secrets.yaml";
   };
 
@@ -31,7 +22,6 @@ in {
 
   services.home-assistant = {
     enable = true;
-    package = ha-package;
     extraComponents = [
       "apple_tv"
       "aussie_broadband"
@@ -116,7 +106,16 @@ in {
 
   services.matter-server = {
     enable = true;
+    # Skip DCL PAA certificates that fail to parse (e.g. the NXP Matter PAA
+    # cert with trailing data in signature_alg) instead of crashing the fetch.
+    package = pkgs.python-matter-server.overrideAttrs (old: {
+      patches = (old.patches or [ ]) ++ [
+        ../packages/matter-server-skip-invalid-paa-cert.patch
+      ];
+    });
   };
+
+  systemd.services.matter-server.path = [ chip-ota-provider-app ];
 
   services.caddy.virtualHosts."${ha-domain}".extraConfig =
     ''

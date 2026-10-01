@@ -1,0 +1,36 @@
+Skip DCL PAA certificates that fail to parse instead of aborting the whole
+fetch task. The production DCL currently serves an NXP Matter PAA certificate
+(SKID 97:97:A4:2F:8D:07:6F:23:C3:88:80:4D:4D:82:42:D9:3D:D7:71:FD) whose
+tbsCertificate.signature AlgorithmIdentifier contains trailing extra data,
+which the strict ASN.1 parser in cryptography rejects with:
+  ValueError: error parsing asn1 value: ParseError { kind: ExtraData,
+  location: ["Certificate::tbs_cert", "TbsCertificate::signature_alg"] }
+
+--- a/matter_server/server/helpers/paa_certificates.py
++++ b/matter_server/server/helpers/paa_certificates.py
+@@ -129,13 +129,18 @@
+                 certificate: str = certificate_data["pemCert"]
+                 subject = certificate_data["subjectAsText"]
+                 certificate = certificate.rstrip("\n")
+-                if await write_paa_root_cert(
+-                    paa_root_cert_dir,
+-                    base_name,
+-                    certificate,
+-                    subject,
+-                ):
+-                    fetch_count += 1
++                try:
++                    if await write_paa_root_cert(
++                        paa_root_cert_dir,
++                        base_name,
++                        certificate,
++                        subject,
++                    ):
++                        fetch_count += 1
++                except ValueError as err:
++                    LOGGER.warning(
++                        "Skipping unparsable PAA certificate '%s': %s", subject, err
++                    )
+     except (ClientError, TimeoutError) as err:
+         LOGGER.warning(
+             "Fetching latest certificates failed: error %s", err, exc_info=err
