@@ -273,6 +273,16 @@ in {
         default = "";
         description = "IPv6 address for the server";
       };
+      ipversions = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = ["ipv4" "ipv6"];
+        description = "what versions of ip to use: ipv4 and/or ipv6";
+      };
+    };
+    cloudflare-bypass-subdomain = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "Domain to use for bypassing Cloudflare (e.g. for SSH).";
     };
     email = {
       server = lib.mkOption {

@@ -3,12 +3,13 @@
 {
   time.timeZone = "UTC";
 
-  services.journald.extraConfig = ''
-SystemMaxUse=1G
-SystemMaxFileSize=100M
-MaxFileSec=1day
-MaxRetentionSec=2months
-''; # Limit journal accumulation
+  # Limit journal accumulation
+  services.journald.settings.Journal = {
+    SystemMaxUse = "1G";
+    SystemMaxFileSize = "100M";
+    MaxFileSec = "1day";
+    MaxRetentionSec = "2months";
+  };
   systemd.coredump.settings.Coredump.MaxUse = "256M";
 
   boot.loader.systemd-boot.configurationLimit = 5; # Limit bootloader entries

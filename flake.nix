@@ -3,6 +3,8 @@
 
   inputs = {
     nixpkgs.url = github:NixOS/nixpkgs/nixos-unstable;
+    # Pinned: declarative-jellyfin doesn't support Jellyfin 12.4 yet
+    nixpkgs-jellyfin.url = "github:NixOS/nixpkgs/1559d3daa3ecc813a650b79375ea61b6741b8746";
     flake-utils-plus.url = github:gytis-ivaskevicius/flake-utils-plus;
     agenix.url = "github:ryantm/agenix";
     declarative-jellyfin.url = "github:Sveske-Juice/declarative-jellyfin";

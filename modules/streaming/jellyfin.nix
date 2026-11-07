@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 # Look at: <https://github.com/Sveske-Juice/declarative-jellyfin>
 # Also see: <https://github.com/9p4/jellyfin-plugin-sso/issues/16#issuecomment-2953811762>
@@ -8,6 +8,7 @@
 # - <https://git.vimium.com/jordan/nix-config/src/branch/master/hosts/library/jellysearch.nix>
 
 let
+  pkgs-jellyfin = inputs.nixpkgs-jellyfin.legacyPackages.${pkgs.stdenv.hostPlatform.system};
   media-dir = "/data/media";
   movies-dir = "${media-dir}/movies";
   shows-dir = "${media-dir}/shows";
@@ -26,7 +27,8 @@ in {
 
   services.declarative-jellyfin = {
     enable = true;
-    package = pkgs.jellyfin;
+    package = pkgs-jellyfin.jellyfin;
+    jellyfin-web = pkgs-jellyfin.jellyfin-web;
     serverId = "f2d18e8c67994ce1baa11016df427c9f";
     backups = false;
     network = {
